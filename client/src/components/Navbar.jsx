@@ -42,9 +42,11 @@ const Navbar = () => {
 
           {user && (
             <>
-              <li><Link to="/budget">Budget</Link></li>
-              <li><Link to="/dashboard">Dashboard</Link></li>
+
+
               <li><Link to="/portfolio">Portfolio</Link></li>
+              <li><Link to="/dashboard">Dashboard</Link></li>
+              <li><Link to="/budget">Budget</Link></li>
             </>
           )}
         </ul>

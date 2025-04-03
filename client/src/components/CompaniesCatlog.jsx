@@ -1,100 +1,184 @@
-import { useState } from "react";
-import "../style/CompaniesCatlog.css"; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { addStock } from "../api/stockApi";
+import axios from "axios";
+import { toast } from "react-toastify";
 import Navbar from "./Navbar";
+import "../style/Theme.css";
+import "../style/CompaniesCatlog.css"
 
-
-
-const nseCompanies = [
-  "Tata Consultancy Services", "Reliance Industries", "Infosys", "HDFC Bank", "ICICI Bank",
-  "Hindustan Unilever", "Bharti Airtel", "Kotak Mahindra Bank", "State Bank of India", "Bajaj Finance",
-  "Asian Paints", "Wipro", "HCL Technologies", "Nestle India", "Larsen & Toubro",
-  "Mahindra & Mahindra", "Tech Mahindra", "Titan Company", "Maruti Suzuki", "Sun Pharma",
-  "Power Grid Corporation", "UltraTech Cement", "NTPC", "Tata Steel", "Oil & Natural Gas Corporation",
-  "IndusInd Bank", "Bharat Petroleum", "JSW Steel", "Cipla", "Bajaj Auto",
-  "Grasim Industries", "Dr. Reddy's Laboratories", "Hero MotoCorp", "Divi's Laboratories", "Tata Motors",
-  "Adani Enterprises", "Adani Green Energy", "Adani Ports", "Bajaj Holdings", "Eicher Motors",
-  "HDFC Life", "Hindalco Industries", "IOC", "ITC", "Lupin",
-  "Pidilite Industries", "Siemens India", "Tata Power", "UPL", "Vedanta"
-];
-
-const bseCompanies = [
-  "Reliance Industries", "Tata Motors", "HDFC Bank", "ICICI Bank", "L&T",
-  "State Bank of India", "Bharti Airtel", "Maruti Suzuki", "Tata Steel", "Wipro",
-  "Infosys", "Hindustan Unilever", "Sun Pharma", "Tech Mahindra", "Asian Paints",
-  "Bajaj Finance", "UltraTech Cement", "Grasim Industries", "Dr. Reddy's", "JSW Steel",
-  "IndusInd Bank", "Mahindra & Mahindra", "Power Grid Corp", "Tata Power", "Bajaj Auto",
-  "Nestle India", "Lupin", "Siemens India", "UPL", "Vedanta"
-];
-
-const StockExchange = () => {
+const CompaniesCatalog = () => {
   const [exchange, setExchange] = useState("NSE");
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const generateDummyData = (companies) => {
-    return companies.map((company, index) => ({
-      id: index + 1,
-      company,
-      marketCap: `${(Math.random() * 1000).toFixed(2)} Cr`,
-      peRatio: (Math.random() * 50).toFixed(2),
-      roe: `${(Math.random() * 30).toFixed(2)}%`,
-      weekHighLow: `${(Math.random() * 5000).toFixed(2)} / ${(Math.random() * 4000).toFixed(2)}`,
-    }));
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`http://localhost:8080/api/market/${exchange}`);
+        setStocks(response.data);
+      } catch (error) {
+        console.error("Error fetching market data:", error);
+        if (exchange === "BSE") {
+          setStocks(getSampleBseData());
+          toast.info("Using sample BSE data as API response failed");
+        } else {
+          toast.error("Failed to fetch market data");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMarketData();
+  }, [exchange]);
+
+  const getSampleBseData = () => {
+    return [
+      {
+        name: "SENSEX",
+        price: "52800.50",
+        change: "125.75",
+        changePercent: "0.24",
+        type: "INDEX"
+      },
+      {
+        name: "RELIANCE",
+        price: "2500.50",
+        change: "25.75",
+        changePercent: "1.03",
+        type: "GAINER"
+      },
+      {
+        name: "TATASTEEL",
+        price: "120.75",
+        change: "-1.25",
+        changePercent: "-1.02",
+        type: "LOSER"
+      },
+      {
+        name: "HDFCBANK",
+        price: "1500.25",
+        change: "15.50",
+        changePercent: "1.04",
+        type: "GAINER"
+      },
+      {
+        name: "ICICIBANK",
+        price: "800.60",
+        change: "-5.40",
+        changePercent: "-0.67",
+        type: "LOSER"
+      },
+      {
+        name: "INFY",
+        price: "1600.00",
+        change: "20.00",
+        changePercent: "1.25",
+        type: "GAINER"
+      }
+    ];
   };
 
-  const data = exchange === "NSE" ? generateDummyData(nseCompanies) : generateDummyData(bseCompanies);
+  const handleBuy = async (stock) => {
+    try {
+      await addStock({
+        stockSymbol: stock.name,
+        quantity: 1,
+        purchasePrice: parseFloat(stock.price),
+      });
+      toast.success(`${stock.name} added to your portfolio!`);
+      navigate("/portfolio");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
-  <>
-   
+    <div className="companies-catalog">
+      <Navbar />
+      <div className="container">
+        {/* <div className="catalog-header">
+          <h1 className="page-title">Stock Market</h1>
+          <div className="exchange-toggle">
+            <button
+              className={`btn ${exchange === "NSE" ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => setExchange("NSE")}
+            >
+              NSE
+            </button>
+            <button
+              className={`btn ${exchange === "BSE" ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => setExchange("BSE")}
+            >
+              BSE
+            </button>
+          </div>
+        </div> */}
 
-   <div  className="company-class">
-   <Navbar/>
-     <div className="Companies-page">
-     
-     <div className="button-group">
-       <button onClick={() => setExchange("NSE")} className="btn nse-btn">
-         NSE
-       </button>
-       <button onClick={() => setExchange("BSE")} className="btn bse-btn">
-         BSE
-       </button>
-     </div>
+<div className="container">
+    <div className="catalog-header">
+      <h1 className="page-title">Stock Market</h1>
+      <div className="exchange-toggle">
+        <button
+          className={`btn ${exchange === "NSE" ? "btn-primary" : "btn-secondary"}`}
+          onClick={() => setExchange("NSE")}
+        >
+          NSE
+        </button>
+        <button
+          className={`btn ${exchange === "BSE" ? "btn-primary" : "btn-secondary"}`}
+          onClick={() => setExchange("BSE")}
+        >
+          BSE
+        </button>
+      </div>
+      <a href="/market" className="btn btn-info know-more-btn">Know More</a>
+    </div>
+  </div>
 
-     <div className="details">
-       <h2>{exchange} Companies</h2>
-       <table>
-         <thead>
-           <tr>
-             <th>SI. No</th>
-             <th>Company</th>
-             <th>Market Cap</th>
-             <th>P/E Ratio</th>
-             <th>ROE</th>
-             <th>52-Week High/Low</th>
-           </tr>
-         </thead>
-         <tbody>
-           {data.map((row) => (
-             <tr key={row.id}>
-               <td>{row.id}</td>
-             <td><a href="">{row.company}</a></td>
-               <td>{row.marketCap}</td>
-               <td>{row.peRatio}</td>
-               <td>{row.roe}</td>
-               <td>{row.weekHighLow}</td>
-             </tr>
-           ))}
-         </tbody>
-       </table>
-     </div>
-   </div> 
+       
+        
 
-   </div>
-
-
-    
-  </>
-    
+        {loading ? (
+          <div className="loading">Loading market data...</div>
+        ) : (
+          <div className="stocks-grid">
+            {stocks.map((stock, index) => (
+              <div key={index} className="card stock-card">
+                <div className="stock-header">
+                  <h3>{stock.name}</h3>
+                  <span className={`tag ${
+                    stock.type === "GAINER" ? "gainer" : 
+                    stock.type === "LOSER" ? "loser" : "index"
+                  }`}>
+                    {stock.type}
+                  </span>
+                </div>
+                <div className="stock-price">
+                  ₹{parseFloat(stock.price).toFixed(2)}
+                </div>
+                <div className={`stock-change ${
+                  parseFloat(stock.changePercent) >= 0 ? "positive" : "negative"
+                }`}>
+                  {parseFloat(stock.changePercent) >= 0 ? "+" : ""}
+                  {stock.changePercent}%
+                </div>
+                <button 
+                  className="btn btn-primary buy-btn"
+                  onClick={() => handleBuy(stock)}
+                >
+                  Buy
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
-export default StockExchange;
+export default CompaniesCatalog;

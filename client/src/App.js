@@ -11,6 +11,7 @@ import CreateDemat from './components/CreateDemat'
 import Budget from './components/Budget'
 import Learn from './components/Learn'
 import Dashboard from './components/Dashboard'
+import Market from './components/Market'
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/budget" element={<Budget/>}></Route>
         <Route path="/learn" element={<Learn/>}></Route>
         <Route path="/dashboard" element={<Dashboard/>}></Route>
+        <Route path="/market" element={<Market/>}></Route>
       </Routes>
     </Router>
     </>

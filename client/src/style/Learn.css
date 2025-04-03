@@ -3,6 +3,10 @@
 }
 
 .learn-content{
-    margin-top:80px;
+    /* margin-top:80px; */
     padding: 20px;
+}
+
+.videos h2{
+color:white;
 }
