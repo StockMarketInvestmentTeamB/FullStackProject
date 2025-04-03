@@ -1,0 +1,83 @@
+# HELP.md
+# target/
+# !.mvn/wrapper/maven-wrapper.jar
+# !**/src/main/**/target/
+# !**/src/test/**/target/
+
+# ### STS ###
+# .apt_generated
+# .classpath
+# .factorypath
+# .project
+# .settings
+# .springBeans
+# .sts4-cache
+
+# ### IntelliJ IDEA ###
+# .idea
+# *.iws
+# *.iml
+# *.ipr
+
+# ### NetBeans ###
+# /nbproject/private/
+# /nbbuild/
+# /dist/
+# /nbdist/
+# /.nb-gradle/
+# build/
+# !**/src/main/**/build/
+# !**/src/test/**/build/
+
+# ### VS Code ###
+# .vscode/
+
+
+# Ignore Maven build directory
+target/
+
+# Ignore Gradle build directories
+build/
+.gradle/
+
+# Ignore Maven wrapper files
+.mvn/
+!mvn/wrapper/maven-wrapper.jar
+
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Ignore Eclipse project files
+.project
+.classpath
+.settings/
+.apt_generated/
+.factorypath/
+
+# Ignore NetBeans project files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore environment configuration files
+.env
+application.properties
+application.yml
+
+# Ignore MongoDB data directory (if applicable)
+data-mongodb/
